@@ -13,7 +13,7 @@ export const generatedUserId = async () => {
   let currentId = (0).toString(); // 0000
   const lastUserId = await findLastUserId();
   if (lastUserId) {
-    currentId = lastUserId.substring(2); // 0001
+    currentId = lastUserId.substring(6); // 0001
   }
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
   incrementId = `User-${incrementId}`;

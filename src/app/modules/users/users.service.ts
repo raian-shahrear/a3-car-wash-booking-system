@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 import config from '../../config';
 import { TGeneralUser } from '../generalUser/generalUser.interface';
 import { TUser } from './users.interface';
-import { generatedUserId } from './user.utils';
+import { generatedAdminId, generatedUserId } from './user.utils';
 import { UserModel } from './users.model';
 import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { GeneralUserModel } from '../generalUser/generalUser.model';
+import { TAdmin } from '../admin/admin.interface';
+import { AdminModel } from '../admin/admin.model';
 
 const createGeneralUserIntoDB = async (
   password: string,
@@ -54,11 +56,50 @@ const createGeneralUserIntoDB = async (
   }
 };
 
-// const createAdminIntoDB = async (password: string, payload) => {
-//     return {}
-// }
+const createAdminIntoDB = async (password: string, payload: TAdmin) => {
+  const adminData: Partial<TUser> = {};
+  adminData.password = password || (config.default_pass as string);
+  adminData.role = 'admin';
+  // create session
+  const session = await mongoose.startSession();
+  try {
+    // start session
+    session.startTransaction();
+
+    adminData.id = await generatedAdminId();
+    const newUser = await UserModel.create([adminData], { session });
+    if (!newUser.length) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Failed to create a new user!',
+      );
+    }
+
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id;
+    const newAdmin = await AdminModel.create([payload], {
+      session,
+    });
+    if (!newAdmin.length) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        'Failed to create a new admin!',
+      );
+    }
+
+    // end the session
+    await session.commitTransaction();
+    await session.endSession();
+
+    return newAdmin;
+  } catch (err) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new AppError(httpStatus.BAD_REQUEST, `error: ${err}`);
+  }
+};
 
 export const UserServices = {
   createGeneralUserIntoDB,
-  // createAdminIntoDB
+  createAdminIntoDB,
 };
