@@ -3,29 +3,29 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './users.service';
 
-const createGeneralUser = catchAsync(async (req, res) => {
-  const { password, user } = req.body;
-  const result = await UserServices.createGeneralUserIntoDB(password, user);
+const registerUser = catchAsync(async (req, res) => {
+  const result = await UserServices.registerUserIntoDB(req.body);
+
   // send response
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: 'User is created successfully!',
+    message: 'User registered successfully!',
     data: result,
   });
 });
 
-const createAdmin = catchAsync(async (req, res) => {
-  const { password, admin } = req.body;
-  const result = await UserServices.createAdminIntoDB(password, admin);
+const getAllUsers = catchAsync(async (req, res) => {
+  const result = await UserServices.getAllUsersFromDB();
+
   // send response
   sendResponse(res, {
     statusCode: httpStatus.OK,
-    message: 'Admin is created successfully!',
+    message: 'Users are retrieved successfully!',
     data: result,
   });
 });
 
 export const UserControllers = {
-  createGeneralUser,
-  createAdmin,
+  registerUser,
+  getAllUsers,
 };

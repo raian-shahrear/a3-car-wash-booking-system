@@ -1,9 +1,9 @@
 export type TUser = {
-  id: string;
+  name: string;
+  email: string;
   password: string;
-  needPasswordChange: boolean;
+  phone: string;
   role: 'admin' | 'user';
-  status: 'active' | 'blocked';
-  passwordChangedAt?: Date;
+  address: string;
   isDeleted: boolean;
 };

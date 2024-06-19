@@ -5,9 +5,14 @@ import config from '../../config';
 
 const userSchema = new Schema<TUser>(
   {
-    id: {
+    name: {
       type: String,
       required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      trim: true,
       unique: true,
     },
     password: {
@@ -15,21 +20,18 @@ const userSchema = new Schema<TUser>(
       required: true,
       // select: 0,
     },
-    needPasswordChange: {
-      type: Boolean,
-      default: true,
+    phone: {
+      type: String,
+      required: true,
+      trim: true,
     },
     role: {
       type: String,
       enum: ['admin', 'user'],
     },
-    status: {
+    address: {
       type: String,
-      enum: ['active', 'blocked'],
-      default: 'active',
-    },
-    passwordChangedAt: {
-      type: Date,
+      required: true,
     },
     isDeleted: {
       type: Boolean,

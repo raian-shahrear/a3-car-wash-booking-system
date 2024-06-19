@@ -1,105 +1,27 @@
-import mongoose from 'mongoose';
-import config from '../../config';
-import { TGeneralUser } from '../generalUser/generalUser.interface';
-import { TUser } from './users.interface';
-import { generatedAdminId, generatedUserId } from './user.utils';
-import { UserModel } from './users.model';
-import AppError from '../../errors/AppError';
 import httpStatus from 'http-status';
-import { GeneralUserModel } from '../generalUser/generalUser.model';
-import { TAdmin } from '../admin/admin.interface';
-import { AdminModel } from '../admin/admin.model';
+import config from '../../config';
+import AppError from '../../errors/AppError';
+import { TUser } from './users.interface';
+import { UserModel } from './users.model';
 
-const createGeneralUserIntoDB = async (
-  password: string,
-  payload: TGeneralUser,
-) => {
-  const userData: Partial<TUser> = {};
-  userData.password = password || (config.default_pass as string);
-  userData.role = 'user';
-  // create session
-  const session = await mongoose.startSession();
-  try {
-    // start session
-    session.startTransaction();
-
-    userData.id = await generatedUserId();
-    const newUser = await UserModel.create([userData], { session });
-    if (!newUser.length) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to create a new user!',
-      );
-    }
-
-    payload.id = newUser[0].id;
-    payload.user = newUser[0]._id;
-    const newGeneralUser = await GeneralUserModel.create([payload], {
-      session,
-    });
-    if (!newGeneralUser.length) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to create a new user!',
-      );
-    }
-
-    // end the session
-    await session.commitTransaction();
-    await session.endSession();
-
-    return newGeneralUser;
-  } catch (err) {
-    await session.abortTransaction();
-    await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, `error: ${err}`);
+const registerUserIntoDB = async (payload: TUser) => {
+  const isUserExist = await UserModel.findOne({ email: payload.email });
+  if (isUserExist) {
+    throw new AppError(httpStatus.CONFLICT, 'User is already registered!');
   }
+
+  const newUser = { ...payload };
+  newUser.password = payload.password || (config.default_pass as string);
+  const result = await UserModel.create(newUser);
+  return result;
 };
 
-const createAdminIntoDB = async (password: string, payload: TAdmin) => {
-  const adminData: Partial<TUser> = {};
-  adminData.password = password || (config.default_pass as string);
-  adminData.role = 'admin';
-  // create session
-  const session = await mongoose.startSession();
-  try {
-    // start session
-    session.startTransaction();
-
-    adminData.id = await generatedAdminId();
-    const newUser = await UserModel.create([adminData], { session });
-    if (!newUser.length) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to create a new user!',
-      );
-    }
-
-    payload.id = newUser[0].id;
-    payload.user = newUser[0]._id;
-    const newAdmin = await AdminModel.create([payload], {
-      session,
-    });
-    if (!newAdmin.length) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'Failed to create a new admin!',
-      );
-    }
-
-    // end the session
-    await session.commitTransaction();
-    await session.endSession();
-
-    return newAdmin;
-  } catch (err) {
-    await session.abortTransaction();
-    await session.endSession();
-    throw new AppError(httpStatus.BAD_REQUEST, `error: ${err}`);
-  }
+const getAllUsersFromDB = async () => {
+  const result = await UserModel.find();
+  return result;
 };
 
 export const UserServices = {
-  createGeneralUserIntoDB,
-  createAdminIntoDB,
+  registerUserIntoDB,
+  getAllUsersFromDB,
 };
