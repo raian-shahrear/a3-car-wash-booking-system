@@ -10,7 +10,7 @@ app.use(cors());
 app.use(cookieParser());
 
 // application route
-app.use('/api/v1', router);
+app.use('/api', router);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Car Wash Booking System!');
