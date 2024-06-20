@@ -7,7 +7,7 @@ export type TUser = {
   address: string;
 };
 
-// export type TLoginUser = {
-//   email: string;
-//   password: string;
-// };
+export type TLoginUser = {
+  email: string;
+  password: string;
+};
