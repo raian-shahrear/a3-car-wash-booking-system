@@ -2,6 +2,8 @@ import httpStatus from 'http-status';
 import AppError from '../../errors/AppError';
 import { TService } from './services.interface';
 import { ServiceModel } from './services.model';
+import { TSlot } from '../slots/slots.interface';
+import { SlotModel } from '../slots/slots.model';
 
 const createServiceIntoDB = async (payload: TService) => {
   const result = await ServiceModel.create(payload);
@@ -57,10 +59,51 @@ const deleteServiceFromDB = async (id: string) => {
   return result;
 };
 
+const createSlotsIntoDB = async (payload: TSlot) => {
+  const { service, startTime, endTime } = payload;
+
+  // Function to convert time to minutes
+  const timeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+  // Convert start and end times to minutes
+  const startMinutes = timeToMinutes(startTime);
+  const endMinutes = timeToMinutes(endTime);
+  // Calculate total duration in minutes
+  const totalDuration = endMinutes - startMinutes;
+  // Calculate the number of slots
+  const isServiceExist = await ServiceModel.findById(service);
+  const slotDuration = isServiceExist?.duration;
+  const numberOfSlots = totalDuration / (slotDuration as number);
+
+  // Generate slots
+  const slots = [];
+  for (let i = 0; i < numberOfSlots; i++) {
+    const slotStartMinutes = startMinutes + i * (slotDuration as number);
+    const slotEndMinutes = slotStartMinutes + (slotDuration as number);
+
+    const formatTime = (minutes: number) => {
+      const hours = String(Math.floor(minutes / 60)).padStart(2, '0');
+      const mins = String(minutes % 60).padStart(2, '0');
+      return `${hours}:${mins}`;
+    };
+
+    const newSlot = { ...payload };
+    newSlot.startTime = formatTime(slotStartMinutes);
+    newSlot.endTime = formatTime(slotEndMinutes);
+    slots.push(newSlot);
+  }
+
+  const result = await SlotModel.create(slots);
+  return result;
+};
+
 export const ServiceServices = {
   createServiceIntoDB,
   getAllServicesFromDB,
   getSingleServiceFromDB,
   updateServiceIntoDB,
   deleteServiceFromDB,
+  createSlotsIntoDB,
 };

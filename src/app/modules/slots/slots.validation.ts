@@ -6,7 +6,6 @@ const createSlotValidationSchema = z.object({
     date: z.string(),
     startTime: z.string(),
     endTime: z.string(),
-    isBooked: z.enum(['available', 'booked']),
   }),
 });
 
