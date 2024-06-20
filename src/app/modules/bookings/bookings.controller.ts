@@ -8,6 +8,7 @@ const createBooking = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'Booking is successful!',
     data: result,
@@ -19,8 +20,11 @@ const getAllBookings = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'All bookings retrieved successfully!',
+    success: result.length ? true : false,
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'All bookings retrieved successfully!'
+      : 'No Data Found!',
     data: result,
   });
 });
@@ -30,8 +34,11 @@ const getSingleBookingByUserId = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'User bookings retrieved successfully!',
+    success: result.length ? true : false,
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'User bookings retrieved successfully!'
+      : 'No Data Found!',
     data: result,
   });
 });

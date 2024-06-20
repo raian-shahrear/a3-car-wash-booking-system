@@ -32,7 +32,7 @@ const createBookingIntoDB = async (payload: TBooking) => {
   }
 
   const modifiedPayload = { ...payload };
-  modifiedPayload.customer = new ObjectId('66730c5b2f643ce1c1014c9f');
+  modifiedPayload.customer = new ObjectId('667475d8562464b5610a8e7b');
 
   // update slot status
   await SlotModel.findByIdAndUpdate(
@@ -54,7 +54,7 @@ const getAllBookingsFromDB = async () => {
 };
 
 const getSingleBookingByUserIdFromDB = async () => {
-  const userId = new ObjectId('66730c5b2f643ce1c1014c9f');
+  const userId = new ObjectId('667475d8562464b5610a8e7b');
   const result = await BookingModel.find({ customer: userId })
     .populate('customer')
     .populate('serviceId')

@@ -20,6 +20,18 @@ const bookingSchema = new Schema<TBooking>(
     },
     vehicleType: {
       type: String,
+      enum: [
+        'car',
+        'truck',
+        'SUV',
+        'van',
+        'motorcycle',
+        'bus',
+        'electricVehicle',
+        'hybridVehicle',
+        'bicycle',
+        'tractor',
+      ],
       required: true,
     },
     vehicleBrand: {
@@ -37,6 +49,7 @@ const bookingSchema = new Schema<TBooking>(
     registrationPlate: {
       type: String,
       required: true,
+      unique: true,
     },
   },
   { timestamps: true },

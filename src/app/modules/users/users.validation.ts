@@ -15,16 +15,14 @@ const createUserValidationSchema = z.object({
   }),
 });
 
-const updateUserValidationSchema = z.object({
-  body: z.object({
-    name: z.string().optional(),
-    email: z.string().email().optional(),
-    phone: z.string().optional(),
-    address: z.string().optional(),
-  }),
-});
+// const loginValidationSchema = z.object({
+//   body: z.object({
+//     email: z.string({ required_error: 'Email is required!' }).email(),
+//     password: z.string({ required_error: 'Password is required!' }),
+//   }),
+// });
 
 export const UserValidation = {
   createUserValidationSchema,
-  updateUserValidationSchema,
+  // loginValidationSchema,
 };

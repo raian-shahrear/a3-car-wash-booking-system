@@ -8,8 +8,11 @@ const getAvailableSlots = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'Available slots are retrieved successfully!',
+    success: result.length ? true : false,
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'Available slots are retrieved successfully!'
+      : 'No Data Found!',
     data: result,
   });
 });
@@ -20,8 +23,11 @@ const getSlotsByServiceId = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'Available slots for specific service are retrieved successfully!',
+    success: result.length ? true : false,
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'Available slots for specific service are retrieved successfully!'
+      : 'No Data Found!',
     data: result,
   });
 });

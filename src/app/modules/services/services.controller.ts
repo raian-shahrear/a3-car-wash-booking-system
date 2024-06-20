@@ -8,6 +8,7 @@ const createService = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'Service is created successfully!',
     data: result,
@@ -19,6 +20,7 @@ const getAllServices = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: result.length ? true : false,
     statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
     message: result.length
       ? 'Services are retrieved successfully!'
@@ -33,6 +35,7 @@ const getSingleService = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'Service is retrieved successfully!',
     data: result,
@@ -45,6 +48,7 @@ const updateService = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'Service is updated successfully!',
     data: result,
@@ -57,6 +61,7 @@ const deleteService = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'Service is deleted successfully!',
     data: result,
@@ -68,6 +73,7 @@ const createSlots = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'Slots are created successfully!',
     data: result,

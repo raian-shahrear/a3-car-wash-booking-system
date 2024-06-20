@@ -16,12 +16,10 @@ const registerUserIntoDB = async (payload: TUser) => {
   return result;
 };
 
+// const loginUser = async () => {};
+
 const getAllUsersFromDB = async () => {
-  const result = await UserModel.find().select([
-    '+role',
-    '+password',
-    '+isDeleted',
-  ]);
+  const result = await UserModel.find().select(['+role', '+password']);
   return result;
 };
 

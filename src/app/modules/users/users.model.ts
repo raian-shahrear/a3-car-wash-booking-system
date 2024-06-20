@@ -34,11 +34,6 @@ const userSchema = new Schema<TUser>(
       type: String,
       required: true,
     },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-      select: 0,
-    },
   },
   { timestamps: true },
 );

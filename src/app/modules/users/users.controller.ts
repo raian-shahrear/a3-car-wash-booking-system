@@ -8,6 +8,7 @@ const registerUser = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: true,
     statusCode: httpStatus.OK,
     message: 'User is registered successfully!',
     data: result,
@@ -19,6 +20,7 @@ const getAllUsers = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
+    success: result.length ? true : false,
     statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
     message: result.length
       ? 'Users are retrieved successfully!'
