@@ -19,8 +19,10 @@ const getAllServices = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'Services are retrieved successfully!',
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'Services are retrieved successfully!'
+      : 'No Data Found!',
     data: result,
   });
 });

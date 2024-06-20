@@ -34,7 +34,7 @@ const updateServiceIntoDB = async (id: string, payload: Partial<TService>) => {
   // checking service is deleted or not
   const isDeleted = isServiceExist.isDeleted;
   if (isDeleted) {
-    throw new AppError(httpStatus.NOT_FOUND, 'This service is deleted!');
+    throw new AppError(httpStatus.BAD_REQUEST, 'This service is deleted!');
   }
 
   const result = await ServiceModel.findByIdAndUpdate(id, payload, {

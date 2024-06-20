@@ -19,8 +19,10 @@ const getAllUsers = catchAsync(async (req, res) => {
 
   // send response
   sendResponse(res, {
-    statusCode: httpStatus.OK,
-    message: 'Users are retrieved successfully!',
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'Users are retrieved successfully!'
+      : 'No Data Found!',
     data: result,
   });
 });

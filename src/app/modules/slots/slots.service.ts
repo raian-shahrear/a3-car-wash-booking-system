@@ -1,4 +1,7 @@
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryByilder';
+import AppError from '../../errors/AppError';
+import { ServiceModel } from '../services/services.model';
 import { SlotModel } from './slots.model';
 
 const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
@@ -9,7 +12,7 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
   }
 
   const slotQuery = new QueryBuilder(
-    SlotModel.find({ isBooked: 'available' }),
+    SlotModel.find({ isBooked: 'available' }).populate('service'),
     newQuery,
   ).filter();
   const result = await slotQuery.queryModel;
@@ -17,7 +20,16 @@ const getAvailableSlotsFromDB = async (query: Record<string, unknown>) => {
 };
 
 const getSlotsByServiceIdFromDB = async (id: string) => {
-  const result = await SlotModel.find({ service: id, isBooked: 'available' });
+  // checking the id exist or not
+  const isServiceExist = await ServiceModel.findById(id);
+  if (!isServiceExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This service is not exist!');
+  }
+
+  const result = await SlotModel.find({
+    service: id,
+    isBooked: 'available',
+  }).populate('service');
   return result;
 };
 

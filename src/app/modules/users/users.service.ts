@@ -17,7 +17,11 @@ const registerUserIntoDB = async (payload: TUser) => {
 };
 
 const getAllUsersFromDB = async () => {
-  const result = await UserModel.find();
+  const result = await UserModel.find().select([
+    '+role',
+    '+password',
+    '+isDeleted',
+  ]);
   return result;
 };
 
