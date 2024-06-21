@@ -40,3 +40,11 @@ https://car-wash-booking-system-backend-six.vercel.app/
 4. Admin can create slots as per service and anyone can access the slots.
 5. User can create bookings and access his/her bookings. Admin can access all bookings.
 6. Validation, Authentication and Authorization are properly used.
+
+### Important Login credentials:
+###### Admin:
+email: admin10@example.com,
+password: admin1234
+###### User:
+email: moye.bright@example.com,
+password": user1234
