@@ -11,7 +11,7 @@ To design this project, here is used Modular pattern with some tech like Typescr
 5. Also follow the package.json file for more info like npm package or commands.
 
 ### Live link:
-
+https://car-wash-booking-system-backend-six.vercel.app/
 
 ### Important routs:
 1. To sign up (anyone): /api/auth/signup (POST)
