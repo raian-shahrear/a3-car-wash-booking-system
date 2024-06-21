@@ -42,9 +42,9 @@ https://car-wash-booking-system-backend-six.vercel.app/
 6. Validation, Authentication and Authorization are properly used.
 
 ### Important Login credentials:
-###### Admin:
-email: admin10@example.com,
-password: admin1234
-###### User:
-email: moye.bright@example.com,
-password": user1234
+##### Admin:
+###### email: admin10@example.com,
+###### password: admin1234
+##### User:
+###### email: moye.bright@example.com,
+###### password: user1234
