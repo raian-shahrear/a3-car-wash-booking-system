@@ -28,4 +28,14 @@ const serviceSchema = new Schema<TService>(
   { timestamps: true },
 );
 
+// hide soft-deleted data before showing
+serviceSchema.pre('find', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+serviceSchema.pre('findOne', function (next) {
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
+
 export const ServiceModel = model<TService>('Service', serviceSchema);

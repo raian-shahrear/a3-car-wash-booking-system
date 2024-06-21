@@ -12,11 +12,11 @@ const createBookingIntoDB = async (
   user: Record<string, unknown>,
 ) => {
   const loggedInUser = await UserModel.findOne({ email: user.userEmail });
-  const { serviceId, slotId } = payload;
+  const { service, slot } = payload;
   const modifiedPayload = { ...payload };
 
   // checking the serviceId exist or not
-  const isServiceExist = await ServiceModel.findById(serviceId);
+  const isServiceExist = await ServiceModel.findById(service);
   if (!isServiceExist) {
     throw new AppError(httpStatus.NOT_FOUND, 'This service is not exist!');
   }
@@ -26,7 +26,7 @@ const createBookingIntoDB = async (
     throw new AppError(httpStatus.BAD_REQUEST, 'This service is deleted!');
   }
   // checking the slotId exist or not
-  const isSlotExist = await SlotModel.findById(slotId);
+  const isSlotExist = await SlotModel.findById(slot);
   if (!isSlotExist) {
     throw new AppError(httpStatus.NOT_FOUND, 'This slot is not exist!');
   }
@@ -47,7 +47,7 @@ const createBookingIntoDB = async (
       session.startTransaction();
       // update slot status
       const updateSlotStatus = await SlotModel.findByIdAndUpdate(
-        slotId,
+        slot,
         { isBooked: 'booked' },
         { new: true, session },
       );
@@ -75,8 +75,8 @@ const createBookingIntoDB = async (
 const getAllBookingsFromDB = async () => {
   const result = await BookingModel.find()
     .populate('customer')
-    .populate('serviceId')
-    .populate('slotId');
+    .populate('service')
+    .populate('slot');
   return result;
 };
 
@@ -85,8 +85,8 @@ const getBookingByUserIdFromDB = async (payload: Record<string, unknown>) => {
   if (loggedInUser) {
     const result = await BookingModel.find({ customer: loggedInUser?._id })
       .populate('customer')
-      .populate('serviceId')
-      .populate('slotId');
+      .populate('service')
+      .populate('slot');
     return result;
   }
 };

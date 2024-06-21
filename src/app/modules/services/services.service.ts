@@ -62,6 +62,12 @@ const deleteServiceFromDB = async (id: string) => {
 const createSlotsIntoDB = async (payload: TSlot) => {
   const { service, startTime, endTime } = payload;
 
+  // checking service is exist or not
+  const isServiceExist = await ServiceModel.findById(service);
+  if (!isServiceExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This service is not exist!');
+  }
+
   // Function to convert time to minutes
   const timeToMinutes = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
@@ -73,7 +79,6 @@ const createSlotsIntoDB = async (payload: TSlot) => {
   // Calculate total duration in minutes
   const totalDuration = endMinutes - startMinutes;
   // Calculate the number of slots
-  const isServiceExist = await ServiceModel.findById(service);
   const slotDuration = isServiceExist?.duration;
   const numberOfSlots = totalDuration / (slotDuration as number);
 

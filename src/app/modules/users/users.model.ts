@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
+
 import { Schema, model } from 'mongoose';
 import { TUser } from './users.interface';
 import bcrypt from 'bcrypt';

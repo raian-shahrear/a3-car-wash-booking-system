@@ -12,7 +12,7 @@ const handleZodError = (err: ZodError): TGenericErrorResponse => {
   const statusCode = httpStatus.BAD_REQUEST;
   return {
     statusCode,
-    message: 'Zod Validation Error',
+    message: 'Validation Error',
     errorSources,
   };
 };
