@@ -19,12 +19,13 @@ const loginUser = catchAsync(async (req, res) => {
   const result = await UserServices.loginUser(req.body);
 
   // send response
-  sendResponse(res, {
+  res.status(httpStatus.OK).json({
     success: true,
     statusCode: httpStatus.OK,
     message: 'User logged in successfully!',
-    data: result,
-  });
+    token: result.token,
+    data: result.data,
+  })
 });
 
 const getAllUsers = catchAsync(async (req, res) => {
