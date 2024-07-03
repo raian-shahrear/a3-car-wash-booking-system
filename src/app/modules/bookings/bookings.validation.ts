@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 const createBookingValidationSchema = z.object({
   body: z.object({
-    service: z.string(),
-    slot: z.string(),
+    serviceId: z.string(),
+    slotId: z.string(),
     vehicleType: z.enum([
       'car',
       'truck',

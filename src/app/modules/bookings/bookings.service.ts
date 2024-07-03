@@ -63,7 +63,12 @@ const createBookingIntoDB = async (
 
       await session.commitTransaction();
       await session.endSession();
-      return result;
+
+      const booking = await BookingModel.findById(result[0]._id)
+        .populate({ path: 'customer', select: '-createdAt -updatedAt' })
+        .populate({ path: 'service', select: '-createdAt -updatedAt' })
+        .populate({ path: 'slot', select: '-createdAt -updatedAt' });
+      return booking;
     } catch (err) {
       await session.abortTransaction();
       await session.endSession();
@@ -74,9 +79,9 @@ const createBookingIntoDB = async (
 
 const getAllBookingsFromDB = async () => {
   const result = await BookingModel.find()
-    .populate('customer')
-    .populate('service')
-    .populate('slot');
+    .populate({ path: 'customer', select: '-createdAt -updatedAt' })
+    .populate({ path: 'service', select: '-createdAt -updatedAt' })
+    .populate({ path: 'slot', select: '-createdAt -updatedAt' });
   return result;
 };
 
@@ -84,9 +89,9 @@ const getBookingByUserIdFromDB = async (payload: Record<string, unknown>) => {
   const loggedInUser = await UserModel.findOne({ email: payload.userEmail });
   if (loggedInUser) {
     const result = await BookingModel.find({ customer: loggedInUser?._id })
-      .populate('customer')
-      .populate('service')
-      .populate('slot');
+      .populate({ path: 'service', select: '-createdAt -updatedAt' })
+      .populate({ path: 'slot', select: '-createdAt -updatedAt' })
+      .select(['-customer']);
     return result;
   }
 };

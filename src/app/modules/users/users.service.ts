@@ -13,7 +13,11 @@ const registerUserIntoDB = async (payload: TUser) => {
   }
 
   const result = await UserModel.create(payload);
-  return result;
+  const newUser = await UserModel.findById(result._id).select([
+    '-password',
+    '+role',
+  ]);
+  return newUser;
 };
 
 const loginUser = async (payload: TLoginUser) => {
