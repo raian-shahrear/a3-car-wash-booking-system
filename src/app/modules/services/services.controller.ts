@@ -16,14 +16,45 @@ const createService = catchAsync(async (req, res) => {
 });
 
 const getAllServices = catchAsync(async (req, res) => {
-  const result = await ServiceServices.getAllServicesFromDB();
+  const result = await ServiceServices.getAllServicesFromDB(req.query);
+
+  // send response
+  res
+    .status(result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND)
+    .json({
+      success: result?.result?.length ? true : false,
+      statusCode: result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+      message: result?.result?.length
+        ? 'Services are retrieved successfully!'
+        : 'No Data Found!',
+      data: result?.result,
+      meta: result?.meta,
+    });
+});
+
+const getFeaturedServices = catchAsync(async (req, res) => {
+  const result = await ServiceServices.getFeaturedServicesFromDB();
 
   // send response
   sendResponse(res, {
     success: result.length ? true : false,
     statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
     message: result.length
-      ? 'Services are retrieved successfully!'
+      ? 'Featured services are retrieved successfully!'
+      : 'No Data Found!',
+    data: result,
+  });
+});
+
+const getServiceNameList = catchAsync(async (req, res) => {
+  const result = await ServiceServices.getServiceNameListFromDB();
+
+  // send response
+  sendResponse(res, {
+    success: result.length ? true : false,
+    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+    message: result.length
+      ? 'Service list are retrieved successfully!'
       : 'No Data Found!',
     data: result,
   });
@@ -83,7 +114,9 @@ const createSlots = catchAsync(async (req, res) => {
 export const ServiceControllers = {
   createService,
   getAllServices,
+  getFeaturedServices,
   getSingleService,
+  getServiceNameList,
   updateService,
   deleteService,
   createSlots,

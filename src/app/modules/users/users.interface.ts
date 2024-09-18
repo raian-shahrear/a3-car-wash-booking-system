@@ -5,6 +5,7 @@ export type TUser = {
   phone: string;
   role: 'admin' | 'user';
   address: string;
+  profile: string;
 };
 
 export type TLoginUser = {

@@ -13,6 +13,7 @@ const createBooking = catchAsync(async (req, res) => {
     vehicleModel: req.body.vehicleModel,
     manufacturingYear: req.body.manufacturingYear,
     registrationPlate: req.body.registrationPlate,
+    transactionId: req.body.transactionId,
   };
   const result = await BookingServices.createBookingIntoDB(
     newBooking,
@@ -29,28 +30,53 @@ const createBooking = catchAsync(async (req, res) => {
 });
 
 const getAllBookings = catchAsync(async (req, res) => {
-  const result = await BookingServices.getAllBookingsFromDB();
+  const result = await BookingServices.getAllBookingsFromDB(req.query);
 
   // send response
-  sendResponse(res, {
-    success: result.length ? true : false,
-    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
-    message: result.length
-      ? 'All bookings retrieved successfully!'
-      : 'No Data Found!',
-    data: result,
-  });
+  res
+    .status(result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND)
+    .json({
+      success: result?.result?.length ? true : false,
+      statusCode: result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+      message: result?.result?.length
+        ? 'All bookings retrieved successfully!'
+        : 'No Data Found!',
+      data: result?.result,
+      meta: result?.meta,
+    });
 });
 
-const getBookingByUserId = catchAsync(async (req, res) => {
-  const result = await BookingServices.getBookingByUserIdFromDB(req.user);
+const getExpiredBookingByUserId = catchAsync(async (req, res) => {
+  const result = await BookingServices.getExpiredBookingByUserIdFromDB(
+    req.user,
+    req.query,
+  );
+
+  // send response
+  res
+    .status(result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND)
+    .json({
+      success: result?.result?.length ? true : false,
+      statusCode: result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+      message: result?.result?.length
+        ? 'Your bookings retrieved successfully!'
+        : 'No Data Found!',
+      data: result?.result,
+      meta: result?.meta,
+    });
+});
+
+const getUpcomingBookingByUserId = catchAsync(async (req, res) => {
+  const result = await BookingServices.getUpcomingBookingByUserIdFromDB(
+    req.user,
+  );
 
   // send response
   sendResponse(res, {
     success: result?.length ? true : false,
     statusCode: result?.length ? httpStatus.OK : httpStatus.NOT_FOUND,
     message: result?.length
-      ? 'User bookings retrieved successfully!'
+      ? 'Your bookings retrieved successfully!'
       : 'No Data Found!',
     data: result,
   });
@@ -59,5 +85,6 @@ const getBookingByUserId = catchAsync(async (req, res) => {
 export const BookingControllers = {
   createBooking,
   getAllBookings,
-  getBookingByUserId,
+  getExpiredBookingByUserId,
+  getUpcomingBookingByUserId,
 };

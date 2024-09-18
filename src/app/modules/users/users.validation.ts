@@ -10,8 +10,23 @@ const createUserValidationSchema = z.object({
       .min(6, { message: 'Password must be at least 6 characters' })
       .optional(),
     phone: z.string(),
-    role: z.enum(['admin', 'user']),
     address: z.string(),
+    profile: z.string(),
+  }),
+});
+
+const updateUserValidationSchema = z.object({
+  body: z.object({
+    name: z.string().optional(),
+    phone: z.string().optional(),
+    address: z.string().optional(),
+    profile: z.string().optional(),
+  }),
+});
+
+const updateUserRoleValidationSchema = z.object({
+  body: z.object({
+    role: z.string().optional(),
   }),
 });
 
@@ -24,5 +39,7 @@ const loginValidationSchema = z.object({
 
 export const UserValidation = {
   createUserValidationSchema,
+  updateUserValidationSchema,
+  updateUserRoleValidationSchema,
   loginValidationSchema,
 };

@@ -20,7 +20,15 @@ const serviceSchema = new Schema<TService>(
       type: Number,
       required: true,
     },
+    image: {
+      type: String,
+      required: true,
+    },
     isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    isFeatured: {
       type: Boolean,
       default: false,
     },

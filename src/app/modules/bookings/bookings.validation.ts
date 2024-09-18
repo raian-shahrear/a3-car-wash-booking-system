@@ -13,13 +13,13 @@ const createBookingValidationSchema = z.object({
       'bus',
       'electricVehicle',
       'hybridVehicle',
-      'bicycle',
       'tractor',
     ]),
     vehicleBrand: z.string(),
     vehicleModel: z.string(),
     manufacturingYear: z.number(),
     registrationPlate: z.string(),
+    transactionId: z.string(),
   }),
 });
 

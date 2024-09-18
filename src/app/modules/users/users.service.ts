@@ -5,6 +5,7 @@ import { UserModel } from './users.model';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 import { crateToken } from './users.util';
+import QueryBuilder from '../../builder/QueryByilder';
 
 const registerUserIntoDB = async (payload: TUser) => {
   const isUserExist = await UserModel.findOne({ email: payload.email });
@@ -18,6 +19,40 @@ const registerUserIntoDB = async (payload: TUser) => {
     '+role',
   ]);
   return newUser;
+};
+
+const updateUserIntoDB = async (
+  id: string,
+  user: Record<string, unknown>,
+  payload: Partial<TUser>,
+) => {
+  // checking logged in user
+  const loggedInUser = await UserModel.findOne({ email: user.userEmail });
+  if (loggedInUser?._id.toString() !== id) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Unauthorized user!');
+  }
+
+  // checking the id exist or not
+  const isUserExist = await UserModel.findById(id);
+  if (!isUserExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not exist!');
+  }
+
+  const result = await UserModel.findByIdAndUpdate(id, payload, { new: true });
+  return result;
+};
+
+const updateUserRoleIntoDB = async (id: string, payload: Partial<TUser>) => {
+  // checking the id exist or not
+  const isUserExist = await UserModel.findById(id);
+  if (!isUserExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'This user is not exist!');
+  }
+
+  const result = await UserModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  }).select(['+role']);
+  return result;
 };
 
 const loginUser = async (payload: TLoginUser) => {
@@ -59,13 +94,26 @@ const loginUser = async (payload: TLoginUser) => {
   };
 };
 
-const getAllUsersFromDB = async () => {
-  const result = await UserModel.find().select(['+role']);
-  return result;
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  const serviceQuery = new QueryBuilder(
+    UserModel.find().select(['+role']),
+    query,
+  )
+    .sort()
+    .paginate();
+  const result = await serviceQuery.queryModel;
+  const meta = await serviceQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
 };
 
 export const UserServices = {
   registerUserIntoDB,
+  updateUserIntoDB,
+  updateUserRoleIntoDB,
   loginUser,
   getAllUsersFromDB,
 };

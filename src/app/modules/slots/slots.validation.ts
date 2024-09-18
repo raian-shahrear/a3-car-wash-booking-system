@@ -39,6 +39,13 @@ const createSlotValidationSchema = z.object({
     ),
 });
 
+const updateSlotStatusValidationSchema = z.object({
+  body: z.object({
+    isBooked: z.enum(['available', 'booked', 'cancelled']),
+  }),
+});
+
 export const SlotValidations = {
   createSlotValidationSchema,
+  updateSlotStatusValidationSchema,
 };

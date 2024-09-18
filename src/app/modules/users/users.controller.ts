@@ -15,6 +15,32 @@ const registerUser = catchAsync(async (req, res) => {
   });
 });
 
+const updateUser = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await UserServices.updateUserIntoDB(id, req.user, req.body);
+
+  // send response
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User is updated successfully!',
+    data: result,
+  });
+});
+
+const updateUserRole = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await UserServices.updateUserRoleIntoDB(id, req.body);
+
+  // send response
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'User role is updated successfully!',
+    data: result,
+  });
+});
+
 const loginUser = catchAsync(async (req, res) => {
   const result = await UserServices.loginUser(req.body);
 
@@ -29,21 +55,26 @@ const loginUser = catchAsync(async (req, res) => {
 });
 
 const getAllUsers = catchAsync(async (req, res) => {
-  const result = await UserServices.getAllUsersFromDB();
+  const result = await UserServices.getAllUsersFromDB(req.query);
 
   // send response
-  sendResponse(res, {
-    success: result.length ? true : false,
-    statusCode: result.length ? httpStatus.OK : httpStatus.NOT_FOUND,
-    message: result.length
-      ? 'Users are retrieved successfully!'
-      : 'No Data Found!',
-    data: result,
-  });
+  res
+    .status(result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND)
+    .json({
+      success: result?.result?.length ? true : false,
+      statusCode: result?.result?.length ? httpStatus.OK : httpStatus.NOT_FOUND,
+      message: result?.result?.length
+        ? 'Users are retrieved successfully!'
+        : 'No Data Found!',
+      data: result?.result,
+      meta: result?.meta,
+    });
 });
 
 export const UserControllers = {
   registerUser,
+  updateUser,
+  updateUserRole,
   loginUser,
   getAllUsers,
 };

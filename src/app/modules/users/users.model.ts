@@ -30,9 +30,14 @@ const userSchema = new Schema<TUser>(
     role: {
       type: String,
       enum: ['admin', 'user'],
+      default: 'user',
       select: 0,
     },
     address: {
+      type: String,
+      required: true,
+    },
+    profile: {
       type: String,
       required: true,
     },

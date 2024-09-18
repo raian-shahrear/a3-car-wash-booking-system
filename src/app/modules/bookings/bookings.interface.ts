@@ -13,10 +13,11 @@ export type TBooking = {
     | 'bus'
     | 'electricVehicle'
     | 'hybridVehicle'
-    | 'bicycle'
     | 'tractor';
   vehicleBrand: string;
   vehicleModel: string;
   manufacturingYear: number;
   registrationPlate: string;
+  transactionId: string;
+  isExpired?: boolean;
 };

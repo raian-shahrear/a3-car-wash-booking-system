@@ -14,6 +14,8 @@ router.post(
   ServiceControllers.createService,
 );
 router.get('/', ServiceControllers.getAllServices);
+router.get('/featured', ServiceControllers.getFeaturedServices);
+router.get('/service-list', ServiceControllers.getServiceNameList);
 router.get('/:id', ServiceControllers.getSingleService);
 router.put(
   '/:id',

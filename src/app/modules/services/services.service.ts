@@ -4,15 +4,42 @@ import { TService } from './services.interface';
 import { ServiceModel } from './services.model';
 import { TSlot } from '../slots/slots.interface';
 import { SlotModel } from '../slots/slots.model';
+import QueryBuilder from '../../builder/QueryByilder';
 
 const createServiceIntoDB = async (payload: TService) => {
   const result = await ServiceModel.create(payload);
   return result;
 };
 
-const getAllServicesFromDB = async () => {
-  const result = await ServiceModel.find();
+const getAllServicesFromDB = async (query: Record<string, unknown>) => {
+  const searchableFields = ['name'];
+
+  const serviceQuery = new QueryBuilder(ServiceModel.find(), query)
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .paginate();
+  const result = await serviceQuery.queryModel;
+  const meta = await serviceQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
+};
+
+const getFeaturedServicesFromDB = async () => {
+  const result = await ServiceModel.find({ isFeatured: true });
   return result;
+};
+
+const getServiceNameListFromDB = async () => {
+  const result = await ServiceModel.find();
+  const newResult = result.map((item) => ({
+    value: item?._id,
+    label: item?.name,
+  }));
+  return newResult;
 };
 
 const getSingleServiceFromDB = async (id: string) => {
@@ -107,7 +134,9 @@ const createSlotsIntoDB = async (payload: TSlot) => {
 export const ServiceServices = {
   createServiceIntoDB,
   getAllServicesFromDB,
+  getFeaturedServicesFromDB,
   getSingleServiceFromDB,
+  getServiceNameListFromDB,
   updateServiceIntoDB,
   deleteServiceFromDB,
   createSlotsIntoDB,

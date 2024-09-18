@@ -6,6 +6,7 @@ import { BookingModel } from './bookings.model';
 import { SlotModel } from '../slots/slots.model';
 import { UserModel } from '../users/users.model';
 import mongoose from 'mongoose';
+import QueryBuilder from '../../builder/QueryByilder';
 
 const createBookingIntoDB = async (
   payload: TBooking,
@@ -77,21 +78,94 @@ const createBookingIntoDB = async (
   }
 };
 
-const getAllBookingsFromDB = async () => {
-  const result = await BookingModel.find()
-    .populate({ path: 'customer', select: '-createdAt -updatedAt' })
-    .populate({ path: 'service', select: '-createdAt -updatedAt' })
-    .populate({ path: 'slot', select: '-createdAt -updatedAt' });
-  return result;
+const getAllBookingsFromDB = async (query: Record<string, unknown>) => {
+  const serviceQuery = new QueryBuilder(
+    BookingModel.find()
+      .populate({ path: 'customer', select: '-createdAt -updatedAt' })
+      .populate({ path: 'service', select: '-createdAt -updatedAt' })
+      .populate({ path: 'slot', select: '-createdAt -updatedAt' }),
+    query,
+  )
+    .filter()
+    .sort()
+    .paginate();
+  const result = await serviceQuery.queryModel;
+  const meta = await serviceQuery.countTotal();
+
+  return {
+    meta,
+    result,
+  };
 };
 
-const getBookingByUserIdFromDB = async (payload: Record<string, unknown>) => {
-  const loggedInUser = await UserModel.findOne({ email: payload.userEmail });
+const getExpiredBookingByUserIdFromDB = async (
+  user: Record<string, unknown>,
+  query: Record<string, unknown>,
+) => {
+  const loggedInUser = await UserModel.findOne({ email: user.userEmail });
   if (loggedInUser) {
-    const result = await BookingModel.find({ customer: loggedInUser?._id })
+    const currentDate = new Date();
+    const bookings = await BookingModel.find({ customer: loggedInUser?._id });
+
+    // Check if the slot is expired based on slot date and endTime
+    for (const booking of bookings) {
+      const slot = await SlotModel.findById(booking.slot);
+      const slotDate = new Date(`${slot?.date}T${slot?.endTime}:00`);
+      if (slotDate < currentDate) {
+        await BookingModel.findByIdAndUpdate(
+          booking._id,
+          { isExpired: true },
+          { new: true },
+        );
+      }
+    }
+    const serviceQuery = new QueryBuilder(
+      BookingModel.find({ customer: loggedInUser?._id, isExpired: true })
+        .populate({ path: 'service', select: '-createdAt -updatedAt' })
+        .populate({ path: 'slot', select: '-createdAt -updatedAt' })
+        .select(['-customer']),
+      query,
+    )
+      .filter()
+      .paginate();
+    const result = await serviceQuery.queryModel;
+    const meta = await serviceQuery.countTotal();
+
+    return {
+      meta,
+      result,
+    };
+  }
+};
+
+const getUpcomingBookingByUserIdFromDB = async (
+  user: Record<string, unknown>,
+) => {
+  const loggedInUser = await UserModel.findOne({ email: user.userEmail });
+  if (loggedInUser) {
+    const currentDate = new Date();
+    const bookings = await BookingModel.find({ customer: loggedInUser?._id });
+
+    // Check if the slot is expired based on slot date and endTime
+    for (const booking of bookings) {
+      const slot = await SlotModel.findById(booking.slot);
+      const slotDate = new Date(`${slot?.date}T${slot?.endTime}:00`);
+      if (slotDate < currentDate) {
+        await BookingModel.findByIdAndUpdate(
+          booking._id,
+          { isExpired: true },
+          { new: true },
+        );
+      }
+    }
+    const result = await BookingModel.find({
+      customer: loggedInUser?._id,
+      isExpired: false,
+    })
       .populate({ path: 'service', select: '-createdAt -updatedAt' })
       .populate({ path: 'slot', select: '-createdAt -updatedAt' })
       .select(['-customer']);
+
     return result;
   }
 };
@@ -99,5 +173,6 @@ const getBookingByUserIdFromDB = async (payload: Record<string, unknown>) => {
 export const BookingServices = {
   createBookingIntoDB,
   getAllBookingsFromDB,
-  getBookingByUserIdFromDB,
+  getExpiredBookingByUserIdFromDB,
+  getUpcomingBookingByUserIdFromDB,
 };

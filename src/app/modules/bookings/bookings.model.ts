@@ -29,7 +29,6 @@ const bookingSchema = new Schema<TBooking>(
         'bus',
         'electricVehicle',
         'hybridVehicle',
-        'bicycle',
         'tractor',
       ],
       required: true,
@@ -49,7 +48,15 @@ const bookingSchema = new Schema<TBooking>(
     registrationPlate: {
       type: String,
       required: true,
+    },
+    transactionId: {
+      type: String,
+      required: true,
       unique: true,
+    },
+    isExpired: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true },
