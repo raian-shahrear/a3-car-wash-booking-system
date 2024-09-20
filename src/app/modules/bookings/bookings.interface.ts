@@ -18,6 +18,7 @@ export type TBooking = {
   vehicleModel: string;
   manufacturingYear: number;
   registrationPlate: string;
-  transactionId: string;
+  transactionId?: string;
+  paymentStatus?: 'pending' | 'paid' | 'failed';
   isExpired?: boolean;
 };

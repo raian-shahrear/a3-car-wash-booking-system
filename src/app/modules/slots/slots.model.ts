@@ -22,7 +22,7 @@ const slotSchema = new Schema<TSlot>(
     },
     isBooked: {
       type: String,
-      enum: ['available', 'booked', 'cancelled'],
+      enum: ['available', 'booked', 'cancelled', 'expired'],
       default: 'available',
     },
   },

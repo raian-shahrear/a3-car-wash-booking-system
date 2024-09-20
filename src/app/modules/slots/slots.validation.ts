@@ -41,7 +41,7 @@ const createSlotValidationSchema = z.object({
 
 const updateSlotStatusValidationSchema = z.object({
   body: z.object({
-    isBooked: z.enum(['available', 'booked', 'cancelled']),
+    isBooked: z.enum(['available', 'booked', 'cancelled', 'expired']),
   }),
 });
 

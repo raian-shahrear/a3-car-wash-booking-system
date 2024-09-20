@@ -13,7 +13,6 @@ const createBooking = catchAsync(async (req, res) => {
     vehicleModel: req.body.vehicleModel,
     manufacturingYear: req.body.manufacturingYear,
     registrationPlate: req.body.registrationPlate,
-    transactionId: req.body.transactionId,
   };
   const result = await BookingServices.createBookingIntoDB(
     newBooking,

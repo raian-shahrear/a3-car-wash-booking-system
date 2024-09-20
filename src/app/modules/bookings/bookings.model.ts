@@ -51,8 +51,12 @@ const bookingSchema = new Schema<TBooking>(
     },
     transactionId: {
       type: String,
-      required: true,
       unique: true,
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['pending', 'paid', 'failed'],
+      default: 'pending',
     },
     isExpired: {
       type: Boolean,

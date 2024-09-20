@@ -10,4 +10,10 @@ export default {
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
   jwt_access_secret: process.env.JWT_ACCESS_SECRET,
   jwt_access_expire_in: process.env.JWT_ACCESS_EXPIRES_IN,
+  server_url: process.env.SERVER_URL,
+  frontend_url: process.env.FRONTEND_URL,
+  store_id: process.env.STORE_ID,
+  signature_key: process.env.SIGNATURE_KEY,
+  payment_url: process.env.PAYMENT_URL,
+  payment_verify_url: process.env.PAYMENT_VERIFY_URL,
 };

@@ -7,6 +7,7 @@ import { SlotModel } from '../slots/slots.model';
 import { UserModel } from '../users/users.model';
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryByilder';
+import { initialPayment } from '../payment/payment.utils';
 
 const createBookingIntoDB = async (
   payload: TBooking,
@@ -42,6 +43,8 @@ const createBookingIntoDB = async (
 
   if (loggedInUser) {
     modifiedPayload.customer = loggedInUser._id;
+    const TX_ID = `TXID-${Math.random().toString(16).slice(2)}`;
+    modifiedPayload.transactionId = TX_ID;
 
     const session = await mongoose.startSession();
     try {
@@ -69,7 +72,21 @@ const createBookingIntoDB = async (
         .populate({ path: 'customer', select: '-createdAt -updatedAt' })
         .populate({ path: 'service', select: '-createdAt -updatedAt' })
         .populate({ path: 'slot', select: '-createdAt -updatedAt' });
-      return booking;
+
+      const paymentInfo = {
+        transactionId: TX_ID,
+        price: isServiceExist?.price,
+        customerName: loggedInUser?.name,
+        customerEmail: loggedInUser?.email,
+        customerAddress: loggedInUser?.address,
+        customerPhone: loggedInUser?.phone,
+      };
+      const paymentSession = await initialPayment(paymentInfo);
+
+      return {
+        booking,
+        paymentSession,
+      };
     } catch (err) {
       await session.abortTransaction();
       await session.endSession();
@@ -107,10 +124,10 @@ const getExpiredBookingByUserIdFromDB = async (
     const currentDate = new Date();
     const bookings = await BookingModel.find({ customer: loggedInUser?._id });
 
-    // Check if the slot is expired based on slot date and endTime
+    // Check if the slot is expired based on slot date and time
     for (const booking of bookings) {
       const slot = await SlotModel.findById(booking.slot);
-      const slotDate = new Date(`${slot?.date}T${slot?.endTime}:00`);
+      const slotDate = new Date(`${slot?.date}T${slot?.startTime}:00`);
       if (slotDate < currentDate) {
         await BookingModel.findByIdAndUpdate(
           booking._id,
@@ -146,10 +163,10 @@ const getUpcomingBookingByUserIdFromDB = async (
     const currentDate = new Date();
     const bookings = await BookingModel.find({ customer: loggedInUser?._id });
 
-    // Check if the slot is expired based on slot date and endTime
+    // Check if the slot is expired based on slot date and time
     for (const booking of bookings) {
       const slot = await SlotModel.findById(booking.slot);
-      const slotDate = new Date(`${slot?.date}T${slot?.endTime}:00`);
+      const slotDate = new Date(`${slot?.date}T${slot?.startTime}:00`);
       if (slotDate < currentDate) {
         await BookingModel.findByIdAndUpdate(
           booking._id,

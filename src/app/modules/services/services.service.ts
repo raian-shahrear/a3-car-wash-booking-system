@@ -108,6 +108,15 @@ const createSlotsIntoDB = async (payload: TSlot) => {
   // Calculate the number of slots
   const slotDuration = isServiceExist?.duration;
   const numberOfSlots = totalDuration / (slotDuration as number);
+  if (
+    totalDuration < slotDuration ||
+    Number.isInteger(numberOfSlots) === false
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Choose the correct slot time as per service duration!',
+    );
+  }
 
   // Generate slots
   const slots = [];

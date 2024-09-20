@@ -19,7 +19,6 @@ const createBookingValidationSchema = z.object({
     vehicleModel: z.string(),
     manufacturingYear: z.number(),
     registrationPlate: z.string(),
-    transactionId: z.string(),
   }),
 });
 

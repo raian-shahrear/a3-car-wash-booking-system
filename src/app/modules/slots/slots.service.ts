@@ -28,11 +28,32 @@ const getSlotsByServiceIdFromDB = async (id: string) => {
 };
 
 const getAllSlotsFromDB = async (query: Record<string, unknown>) => {
+  // get all slot
+  const allSlots = await SlotModel.find();
+  const currentDate = new Date();
+
+  // update it expire when the date & time out of current date
+  for (const slot of allSlots) {
+    const slotDateTime = new Date(`${slot.date}T${slot.startTime}`);
+    if (
+      slotDateTime < currentDate &&
+      slot.isBooked !== 'expired' &&
+      slot.isBooked !== 'booked'
+    ) {
+      await SlotModel.findByIdAndUpdate(
+        slot._id,
+        { isBooked: 'expired' },
+        { new: true },
+      );
+    }
+  }
+  // get again slot data with query
   const slotQuery = new QueryBuilder(
     SlotModel.find().populate('service'),
     query,
   )
     .filter()
+    .sort()
     .paginate();
   const result = await slotQuery.queryModel;
   const meta = await slotQuery.countTotal();
