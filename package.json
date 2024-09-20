@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && copyfiles -u 1 src/views/*.html dist",
     "start": "node ./dist/server.js",
     "start:prod": "nodemon ./dist/server.js",
     "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",
@@ -39,6 +39,7 @@
     "@types/node": "^20.14.5",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.6.0",
