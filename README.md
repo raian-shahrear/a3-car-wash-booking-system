@@ -15,13 +15,13 @@
 https://car-wash-booking-system-backend-six.vercel.app
 
 ### Important routes:
----------------------Auth------------------------
+- --------------------Auth------------------------
 1. To sign up (anyone): /api/auth/signup (POST)
 2. To login (anyone): /api/auth/login (POST)
 3. To get all user (only by admin): /api/auth/users (GET)
 4. To update user (only by admin): /api/auth/user/:id (PATCH)
 5. To update user-role (only by admin): /api/auth/user-role/:id (PATCH)
-   ---------------------Service------------------------
+- --------------------Service------------------------
 6. To create service (only by admin): /api/services (POST)
 7. To get a service (anyone): /api/services/:id (GET)
 8. To get all services (anyone): /api/services (GET)
@@ -29,18 +29,18 @@ https://car-wash-booking-system-backend-six.vercel.app
 10. To get services-name for dropdown (anyone): /api/services/service-list (GET)
 11. To update a service (only by admin): /api/services/:id (PUT)
 12. To delete (soft) a service (only by admin): /api/services/:id (DELETE)
-    ---------------------Slot------------------------
+- --------------------Slot------------------------
 13. To create slots (only by admin): /api/services/slots (POST)
     14.1. To get all slots (anyone): /api/slots (GET)
     14.2. Also can use query parameters such as 'date' and 'service' (anyone): /api/slots?date=2024-06-15&service=60d9c4e4f3b4b544b8b8d1c5 (GET)
 14. To get slots by serviceId (anyone): /api/slots/:id (GET)
 15. To update slot status by serviceId (only bu admin): /api/slots/:id (PATCH)
-    ---------------------Booking------------------------
+- --------------------Booking------------------------
 16. To book a service (only by user): /api/bookings (POST)
 17. To get all bookings (only by admin): /api/bookings (GET)
 18. To get user's expired bookings (only by user): /api/my-bookings/expired (GET)
 19. To get user's upcoming bookings (only by user): /api/my-bookings/upcoming (GET)
-    ---------------------Client Review------------------------
+- --------------------Client Review------------------------
 20. To create client review (only by user): /api/reviews (POST)
 21. To get all reviews (by user & admin): /api/reviews (GET)
 22. To get user's reviews (only by user): /api/reviews/my-reviews (GET)
