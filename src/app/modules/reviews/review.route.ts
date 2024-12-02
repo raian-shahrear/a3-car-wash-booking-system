@@ -12,7 +12,7 @@ router.post(
   validateRequest(ReviewValidations.createReviewValidationSchema),
   ReviewControllers.createReview,
 );
-router.get('/', auth('admin', 'user'), ReviewControllers.getAllReviews);
+router.get('/', ReviewControllers.getAllReviews);
 router.get('/my-reviews', auth('user'), ReviewControllers.getReviewsByUserId);
 router.patch(
   '/:id',
